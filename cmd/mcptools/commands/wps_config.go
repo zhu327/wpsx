@@ -16,12 +16,12 @@ import (
 
 // WPSConfig 存储 WPS 365 OAuth2 认证信息。
 type WPSConfig struct {
+	AccessTokenExpiresAt  time.Time `json:"access_token_expires_at"`
+	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
 	AppID                 string    `json:"app_id"`
 	AppSecret             string    `json:"app_secret"`
 	AccessToken           string    `json:"access_token"`
 	RefreshToken          string    `json:"refresh_token"`
-	AccessTokenExpiresAt  time.Time `json:"access_token_expires_at"`
-	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
 }
 
 // wpsConfigDir 返回 ~/.config/wps 目录路径。
@@ -76,8 +76,8 @@ func SaveWPSConfig(cfg *WPSConfig) error {
 		return err
 	}
 
-	if err := os.MkdirAll(dir, 0o700); err != nil {
-		return fmt.Errorf("failed to create WPS config directory: %w", err)
+	if mkErr := os.MkdirAll(dir, 0o700); mkErr != nil {
+		return fmt.Errorf("failed to create WPS config directory: %w", mkErr)
 	}
 
 	data, err := json.MarshalIndent(cfg, "", "  ")
@@ -144,13 +144,13 @@ func GetValidAccessToken() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to open token lock file: %w", err)
 	}
-	defer lockFile.Close()
+	defer func() { _ = lockFile.Close() }()
 
 	// 加独占锁（阻塞直到获取）
-	if err := syscall.Flock(int(lockFile.Fd()), syscall.LOCK_EX); err != nil {
-		return "", fmt.Errorf("failed to acquire token lock: %w", err)
+	if flockErr := syscall.Flock(int(lockFile.Fd()), syscall.LOCK_EX); flockErr != nil {
+		return "", fmt.Errorf("failed to acquire token lock: %w", flockErr)
 	}
-	defer syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN) //nolint:errcheck // best effort unlock
+	defer func() { _ = syscall.Flock(int(lockFile.Fd()), syscall.LOCK_UN) }() //nolint:errcheck // best effort unlock
 
 	// Double-check：加锁后重新读配置，可能其他进程已刷新
 	cfg, err = LoadWPSConfig()
@@ -171,13 +171,13 @@ func GetValidAccessToken() (string, error) {
 // tokenResponse 是 WPS OAuth2 token 接口的响应体。
 type tokenResponse struct {
 	AccessToken      string `json:"access_token"`
-	ExpiresIn        int    `json:"expires_in"`
 	RefreshToken     string `json:"refresh_token"`
-	RefreshExpiresIn int    `json:"refresh_expires_in"`
 	TokenType        string `json:"token_type"`
+	Msg              string `json:"msg"`
+	ExpiresIn        int    `json:"expires_in"`
+	RefreshExpiresIn int    `json:"refresh_expires_in"`
 	// 失败时的字段
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
+	Code int `json:"code"`
 }
 
 // refreshAccessToken 调用 WPS 刷新接口更新 cfg 中的 token，并保存到磁盘。
@@ -193,7 +193,7 @@ func refreshAccessToken(cfg *WPSConfig) error {
 	if err != nil {
 		return fmt.Errorf("failed to refresh WPS token: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

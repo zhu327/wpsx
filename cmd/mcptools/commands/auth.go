@@ -80,7 +80,7 @@ func exchangeCodeForToken(appID, appSecret, code, callbackURL string) error {
 	if err != nil {
 		return fmt.Errorf("请求 token 失败: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -165,7 +165,7 @@ func AuthCmd() *cobra.Command {
 			fmt.Fprintln(cmd.OutOrStdout())
 
 			// 4. 等待用户输入回调 URL
-			fmt.Fprint(cmd.OutOrStdout(), "授权完成后，请将浏览器地址栏中的完整回调 URL 粘贴到此处：\n> ")
+			_, _ = fmt.Fprint(cmd.OutOrStdout(), "授权完成后，请将浏览器地址栏中的完整回调 URL 粘贴到此处：\n> ")
 
 			reader := bufio.NewReader(os.Stdin)
 			rawCallbackURL, err := reader.ReadString('\n')
