@@ -24,7 +24,10 @@ func (m *MockTransport) Start(_ context.Context) error {
 }
 
 // SendRequest overrides the default implementation of the transport.SendRequest method.
-func (m *MockTransport) SendRequest(_ context.Context, request transport.JSONRPCRequest) (*transport.JSONRPCResponse, error) {
+func (m *MockTransport) SendRequest(
+	_ context.Context,
+	request transport.JSONRPCRequest,
+) (*transport.JSONRPCResponse, error) {
 	if request.Method == "initialize" {
 		return &transport.JSONRPCResponse{Result: json.RawMessage(`{}`)}, nil
 	}

@@ -61,10 +61,20 @@ Entity types:
 			fmt.Fprintf(os.Stderr, "Guard filtering configuration:\n")
 			for _, entityType := range entityTypes {
 				if len(allowPatterns[entityType]) > 0 {
-					fmt.Fprintf(os.Stderr, "Allowing %s matching: %s\n", entityType, strings.Join(allowPatterns[entityType], ", "))
+					fmt.Fprintf(
+						os.Stderr,
+						"Allowing %s matching: %s\n",
+						entityType,
+						strings.Join(allowPatterns[entityType], ", "),
+					)
 				}
 				if len(denyPatterns[entityType]) > 0 {
-					fmt.Fprintf(os.Stderr, "Denying %s matching: %s\n", entityType, strings.Join(denyPatterns[entityType], ", "))
+					fmt.Fprintf(
+						os.Stderr,
+						"Denying %s matching: %s\n",
+						entityType,
+						strings.Join(denyPatterns[entityType], ", "),
+					)
 				}
 			}
 
@@ -82,7 +92,10 @@ Entity types:
 			// Verify we have a command to run
 			if len(parsedArgs) == 0 {
 				fmt.Fprintf(os.Stderr, "Error: command to execute is required\n")
-				fmt.Fprintf(os.Stderr, "Example: mcp guard --allow tools:read_* npx -y @modelcontextprotocol/server-filesystem ~\n")
+				fmt.Fprintf(
+					os.Stderr,
+					"Example: mcp guard --allow tools:read_* npx -y @modelcontextprotocol/server-filesystem ~\n",
+				)
 				os.Exit(1)
 			}
 

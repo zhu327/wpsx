@@ -41,6 +41,7 @@ func main() {
 		commands.ConfigsCmd(),
 		commands.NewCmd(),
 		commands.GuardCmd(),
+		commands.AuthCmd(),
 	)
 
 	if err := rootCmd.Execute(); err != nil {

@@ -6,8 +6,11 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestProcessFlags(t *testing.T) {
@@ -189,4 +192,76 @@ nested  {"key":"value"}`[1:] // remove first newline
 			}
 		})
 	}
+}
+
+func TestBuildAuthHeader_WPSAutoInject(t *testing.T) {
+	// Arrange: write valid WPS config
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+
+	cfg := &WPSConfig{
+		AppID:                "id",
+		AppSecret:            "secret",
+		AccessToken:          "wps_access_token",
+		RefreshToken:         "refresh",
+		AccessTokenExpiresAt: time.Now().Add(1 * time.Hour),
+	}
+	require.NoError(t, SaveWPSConfig(cfg))
+
+	// Clear global auth variables
+	oldAuthHeader := AuthHeader
+	oldAuthUser := AuthUser
+	AuthHeader = ""
+	AuthUser = ""
+	defer func() {
+		AuthHeader = oldAuthHeader
+		AuthUser = oldAuthUser
+	}()
+
+	// Act
+	header, cleanURL, err := buildAuthHeader("https://openapi.wps.cn/mcp/tools")
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, "Bearer wps_access_token", header)
+	assert.Equal(t, "https://openapi.wps.cn/mcp/tools", cleanURL)
+}
+
+func TestBuildAuthHeader_WPSAutoInject_ExplicitHeaderTakesPriority(t *testing.T) {
+	// Arrange: --auth-header set, should NOT auto-inject
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+
+	oldAuthHeader := AuthHeader
+	AuthHeader = "Bearer explicit_token"
+	defer func() { AuthHeader = oldAuthHeader }()
+
+	// Act
+	header, _, err := buildAuthHeader("https://openapi.wps.cn/mcp/tools")
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, "Bearer explicit_token", header)
+}
+
+func TestBuildAuthHeader_NonWPSURL_NoAutoInject(t *testing.T) {
+	// Arrange: non-WPS URL, no auth set
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+
+	oldAuthHeader := AuthHeader
+	oldAuthUser := AuthUser
+	AuthHeader = ""
+	AuthUser = ""
+	defer func() {
+		AuthHeader = oldAuthHeader
+		AuthUser = oldAuthUser
+	}()
+
+	// Act
+	header, _, err := buildAuthHeader("https://other.example.com/mcp/tools")
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, "", header)
 }

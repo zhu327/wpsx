@@ -24,9 +24,14 @@ var (
 	ErrCommandRequired = fmt.Errorf("command to execute is required when using stdio transport")
 )
 
+// wpsOpenAPIMCPPrefix is the URL prefix for WPS 365 MCP platform.
+// When a URL matches this prefix and no explicit auth is provided, access_token is auto-injected.
+const wpsOpenAPIMCPPrefix = "https://openapi.wps.cn/mcp/"
+
 // IsHTTP returns true if the string is a valid HTTP URL.
 func IsHTTP(str string) bool {
-	return strings.HasPrefix(str, "http://") || strings.HasPrefix(str, "https://") || strings.HasPrefix(str, "localhost:")
+	return strings.HasPrefix(str, "http://") || strings.HasPrefix(str, "https://") ||
+		strings.HasPrefix(str, "localhost:")
 }
 
 // buildAuthHeader builds an Authorization header from the available auth options.
@@ -80,6 +85,15 @@ func buildAuthHeader(originalURL string) (string, string, error) {
 
 			return "Basic " + auth, cleanURL, nil
 		}
+	}
+
+	// When URL matches WPS MCP platform prefix and no explicit auth is configured, auto-inject token.
+	if strings.HasPrefix(originalURL, wpsOpenAPIMCPPrefix) {
+		token, tokenErr := GetValidAccessToken()
+		if tokenErr != nil {
+			return "", originalURL, fmt.Errorf("WPS token 获取失败，请先运行 `wps auth`: %w", tokenErr)
+		}
+		return "Bearer " + token, cleanURL, nil
 	}
 
 	return "", cleanURL, nil

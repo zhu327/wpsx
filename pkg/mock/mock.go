@@ -542,7 +542,11 @@ func (s *Server) writeError(err error) {
 }
 
 // RunMockServer creates and runs a mock MCP server with the specified entities.
-func RunMockServer(tools map[string]string, prompts map[string]map[string]string, resources map[string]map[string]string) error {
+func RunMockServer(
+	tools map[string]string,
+	prompts map[string]map[string]string,
+	resources map[string]map[string]string,
+) error {
 	server, err := NewServer()
 	if err != nil {
 		return fmt.Errorf("error creating server: %w", err)

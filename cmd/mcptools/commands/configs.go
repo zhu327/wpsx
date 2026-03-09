@@ -258,7 +258,11 @@ func readConfigFile(configFile string) (map[string]interface{}, error) {
 }
 
 // addServerToConfig adds a server configuration to the config data.
-func addServerToConfig(configData map[string]interface{}, jsonPath, serverName string, serverConfig map[string]interface{}) {
+func addServerToConfig(
+	configData map[string]interface{},
+	jsonPath, serverName string,
+	serverConfig map[string]interface{},
+) {
 	if strings.Contains(jsonPath, "mcp.servers") {
 		// VS Code format
 		if _, ok := configData["mcp"]; !ok {
@@ -300,7 +304,10 @@ func addServerToConfig(configData map[string]interface{}, jsonPath, serverName s
 }
 
 // getServerFromConfig gets a server configuration from the config data.
-func getServerFromConfig(configData map[string]interface{}, jsonPath, serverName string) (map[string]interface{}, bool) {
+func getServerFromConfig(
+	configData map[string]interface{},
+	jsonPath, serverName string,
+) (map[string]interface{}, bool) {
 	if strings.Contains(jsonPath, "mcp.servers") {
 		// VS Code format
 		mcpMap, ok := configData["mcp"].(map[string]interface{})
@@ -639,7 +646,14 @@ func scanForServers() ([]ServerConfig, error) {
 	var servers []ServerConfig
 
 	// Scan VS Code Insiders
-	vscodeInsidersPath := filepath.Join(homeDir, "Library", "Application Support", "Code - Insiders", "User", "settings.json")
+	vscodeInsidersPath := filepath.Join(
+		homeDir,
+		"Library",
+		"Application Support",
+		"Code - Insiders",
+		"User",
+		"settings.json",
+	)
 	vscodeServers, err := scanVSCodeConfig(vscodeInsidersPath, "VS Code Insiders")
 	if err == nil {
 		servers = append(servers, vscodeServers...)
@@ -667,7 +681,13 @@ func scanForServers() ([]ServerConfig, error) {
 	}
 
 	// Scan Claude Desktop
-	claudeDesktopPath := filepath.Join(homeDir, "Library", "Application Support", "Claude", "claude_desktop_config.json")
+	claudeDesktopPath := filepath.Join(
+		homeDir,
+		"Library",
+		"Application Support",
+		"Claude",
+		"claude_desktop_config.json",
+	)
 	claudeServers, err := scanMCPServersConfig(claudeDesktopPath, "Claude Desktop")
 	if err == nil {
 		servers = append(servers, claudeServers...)
@@ -1190,9 +1210,16 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 
 						// Parse headers
 						if HeadersOption != "" {
-							headers, parseErr := parseKeyValueOption(HeadersOption) //nolint:govet,shadow // reusing variable name for clarity
+							headers, parseErr := parseKeyValueOption(
+								HeadersOption,
+							) //nolint:govet,shadow // reusing variable name for clarity
 							if parseErr != nil {
-								fmt.Fprintf(cmd.ErrOrStderr(), "Error parsing headers for alias '%s': %v\n", aliasName, parseErr)
+								fmt.Fprintf(
+									cmd.ErrOrStderr(),
+									"Error parsing headers for alias '%s': %v\n",
+									aliasName,
+									parseErr,
+								)
 								continue
 							}
 							if len(headers) > 0 {
@@ -1221,9 +1248,16 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 
 				// Parse environment variables
 				if EnvOption != "" {
-					env, parseErr := parseKeyValueOption(EnvOption) //nolint:govet,shadow // reusing variable name for clarity
+					env, parseErr := parseKeyValueOption(
+						EnvOption,
+					) //nolint:govet,shadow // reusing variable name for clarity
 					if parseErr != nil {
-						fmt.Fprintf(cmd.ErrOrStderr(), "Error parsing environment variables for alias '%s': %v\n", aliasName, parseErr)
+						fmt.Fprintf(
+							cmd.ErrOrStderr(),
+							"Error parsing environment variables for alias '%s': %v\n",
+							aliasName,
+							parseErr,
+						)
 						continue
 					}
 					if len(env) > 0 {
@@ -1242,13 +1276,24 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 				}
 
 				if writeErr := os.WriteFile(configFile, data, filePermissions); writeErr != nil { //nolint:gosec // User config file
-					fmt.Fprintf(cmd.ErrOrStderr(), "Error writing config file for alias '%s': %v\n", aliasName, writeErr)
+					fmt.Fprintf(
+						cmd.ErrOrStderr(),
+						"Error writing config file for alias '%s': %v\n",
+						aliasName,
+						writeErr,
+					)
 					continue
 				}
 
 				successCount++
 				if exists {
-					fmt.Fprintf(cmd.OutOrStdout(), "Server '%s' updated for alias '%s' in %s\n", serverName, aliasName, configFile)
+					fmt.Fprintf(
+						cmd.OutOrStdout(),
+						"Server '%s' updated for alias '%s' in %s\n",
+						serverName,
+						aliasName,
+						configFile,
+					)
 				} else {
 					fmt.Fprintf(cmd.OutOrStdout(), "Server '%s' added for alias '%s' to %s\n", serverName, aliasName, configFile)
 				}
@@ -1256,14 +1301,20 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 
 			// Report summary if multiple aliases were processed
 			if len(aliasList) > 1 {
-				fmt.Fprintf(cmd.OutOrStdout(), "\nSummary: Successfully processed %d of %d aliases\n", successCount, len(aliasList))
+				fmt.Fprintf(
+					cmd.OutOrStdout(),
+					"\nSummary: Successfully processed %d of %d aliases\n",
+					successCount,
+					len(aliasList),
+				)
 			}
 		},
 	}
 
 	// Add flags to the commands - these are just for documentation since we do manual parsing
 	setCmd.Flags().StringVar(&ConfigFileOption, "config", "", "Path to the configuration file")
-	setCmd.Flags().StringVar(&HeadersOption, "headers", "", "Headers for URL-based servers (comma-separated key=value pairs)")
+	setCmd.Flags().
+		StringVar(&HeadersOption, "headers", "", "Headers for URL-based servers (comma-separated key=value pairs)")
 	setCmd.Flags().StringVar(&EnvOption, "env", "", "Environment variables (comma-separated key=value pairs)")
 
 	// Add the remove subcommand
@@ -1312,7 +1363,13 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 				// Remove the server
 				removed := removeServerFromConfig(configData, jsonPath, serverName)
 				if !removed {
-					fmt.Fprintf(cmd.ErrOrStderr(), "Error: server '%s' not found for alias '%s' in %s\n", serverName, aliasName, configFile)
+					fmt.Fprintf(
+						cmd.ErrOrStderr(),
+						"Error: server '%s' not found for alias '%s' in %s\n",
+						serverName,
+						aliasName,
+						configFile,
+					)
 					continue
 				}
 
@@ -1324,17 +1381,33 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 				}
 
 				if writeErr := os.WriteFile(configFile, data, filePermissions); writeErr != nil { //nolint:gosec // User config file
-					fmt.Fprintf(cmd.ErrOrStderr(), "Error writing config file for alias '%s': %v\n", aliasName, writeErr)
+					fmt.Fprintf(
+						cmd.ErrOrStderr(),
+						"Error writing config file for alias '%s': %v\n",
+						aliasName,
+						writeErr,
+					)
 					continue
 				}
 
 				successCount++
-				fmt.Fprintf(cmd.OutOrStdout(), "Server '%s' removed for alias '%s' from %s\n", serverName, aliasName, configFile)
+				fmt.Fprintf(
+					cmd.OutOrStdout(),
+					"Server '%s' removed for alias '%s' from %s\n",
+					serverName,
+					aliasName,
+					configFile,
+				)
 			}
 
 			// Report summary if multiple aliases were processed
 			if len(aliasList) > 1 {
-				fmt.Fprintf(cmd.OutOrStdout(), "\nSummary: Successfully processed %d of %d aliases\n", successCount, len(aliasList))
+				fmt.Fprintf(
+					cmd.OutOrStdout(),
+					"\nSummary: Successfully processed %d of %d aliases\n",
+					successCount,
+					len(aliasList),
+				)
 			}
 		},
 	}
@@ -1442,7 +1515,12 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 
 				// Skip if file doesn't exist
 				if _, err := os.Stat(expandedPath); os.IsNotExist(err) {
-					fmt.Fprintf(cmd.ErrOrStderr(), "Warning: config file for alias '%s' not found at %s, skipping\n", aliasName, expandedPath)
+					fmt.Fprintf(
+						cmd.ErrOrStderr(),
+						"Warning: config file for alias '%s' not found at %s, skipping\n",
+						aliasName,
+						expandedPath,
+					)
 					continue
 				}
 
@@ -1478,7 +1556,12 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 				// Get servers from this config
 				servers, err := getServersFromConfig(expandedPath, aliasConfig.JSONPath, aliasConfig.Source)
 				if err != nil {
-					fmt.Fprintf(cmd.ErrOrStderr(), "Warning: failed to read servers from alias '%s': %v, skipping\n", aliasName, err)
+					fmt.Fprintf(
+						cmd.ErrOrStderr(),
+						"Warning: failed to read servers from alias '%s': %v, skipping\n",
+						aliasName,
+						err,
+					)
 					continue
 				}
 
@@ -1517,7 +1600,12 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 					// Skip interactive resolution if default choice is set
 					if defaultChoice == "first" {
 						allServers[name] = conflictingConfigs[0]
-						fmt.Fprintf(cmd.OutOrStdout(), "Conflict for '%s': automatically selected version from '%s'\n", name, sources[0])
+						fmt.Fprintf(
+							cmd.OutOrStdout(),
+							"Conflict for '%s': automatically selected version from '%s'\n",
+							name,
+							sources[0],
+						)
 						continue
 					} else if defaultChoice == "second" {
 						allServers[name] = conflictingConfigs[1]
@@ -1546,11 +1634,16 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 							input = "1" // Default to first option on error
 						}
 
-						if n, err := fmt.Sscanf(input, "%d", &choice); err == nil && n == 1 && choice >= 1 && choice <= len(conflictingConfigs) {
+						if n, err := fmt.Sscanf(input, "%d", &choice); err == nil && n == 1 && choice >= 1 &&
+							choice <= len(conflictingConfigs) {
 							break
 						}
 
-						fmt.Fprintf(cmd.OutOrStdout(), "Invalid choice. Please enter a number between 1 and %d\n", len(conflictingConfigs))
+						fmt.Fprintf(
+							cmd.OutOrStdout(),
+							"Invalid choice. Please enter a number between 1 and %d\n",
+							len(conflictingConfigs),
+						)
 					}
 
 					// Save user's choice
@@ -1560,7 +1653,12 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 			}
 
 			// Now update all configuration files
-			fmt.Fprintf(cmd.OutOrStdout(), "\nUpdating %d configuration files with %d merged servers\n", len(aliasNames), len(allServers))
+			fmt.Fprintf(
+				cmd.OutOrStdout(),
+				"\nUpdating %d configuration files with %d merged servers\n",
+				len(aliasNames),
+				len(allServers),
+			)
 
 			// Track success/failure
 			successful := 0
@@ -1632,7 +1730,8 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 
 	// Add flags to the sync command
 	syncCmd.Flags().StringVar(&OutputAliasOption, "output", "", "Output alias (defaults to first alias)")
-	syncCmd.Flags().StringVar(&DefaultChoiceOption, "default", "interactive", "Default choice for conflicts: 'first', 'second', or 'interactive'")
+	syncCmd.Flags().
+		StringVar(&DefaultChoiceOption, "default", "interactive", "Default choice for conflicts: 'first', 'second', or 'interactive'")
 
 	// Add subcommands to the configs command
 	cmd.AddCommand(lsCmd, viewCmd, setCmd, removeCmd, aliasCmd, syncCmd, scanCmd)
@@ -1686,7 +1785,10 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 
 			// Make sure we have at least one argument
 			if len(cleanedArgs) < 1 {
-				fmt.Fprintf(cmd.ErrOrStderr(), "Error: as-json command requires at least one argument (command or URL)\n")
+				fmt.Fprintf(
+					cmd.ErrOrStderr(),
+					"Error: as-json command requires at least one argument (command or URL)\n",
+				)
 				return
 			}
 
@@ -1746,7 +1848,8 @@ VS Code, VS Code Insiders, Windsurf, Cursor, Claude Desktop, Claude Code`,
 	}
 
 	// Add flags to the as-json command - these are just for documentation since we do manual parsing
-	asJSONCmd.Flags().StringVar(&HeadersOption, "headers", "", "Headers for URL-based servers (comma-separated key=value pairs)")
+	asJSONCmd.Flags().
+		StringVar(&HeadersOption, "headers", "", "Headers for URL-based servers (comma-separated key=value pairs)")
 	asJSONCmd.Flags().StringVar(&EnvOption, "env", "", "Environment variables (comma-separated key=value pairs)")
 
 	// Add the as-json command to the main command

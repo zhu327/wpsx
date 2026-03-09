@@ -51,7 +51,10 @@ Example:
 				case EntityTypeTool:
 					if i+1 >= len(args) {
 						fmt.Fprintln(os.Stderr, "Error: each tool must have both a name and description")
-						fmt.Fprintln(os.Stderr, "Example: mcp mock tool hello_world \"when user says hello world, run this tool\"")
+						fmt.Fprintln(
+							os.Stderr,
+							"Example: mcp mock tool hello_world \"when user says hello world, run this tool\"",
+						)
 						os.Exit(1)
 					}
 
@@ -64,7 +67,10 @@ Example:
 				case EntityTypePrompt:
 					if i+2 >= len(args) {
 						fmt.Fprintln(os.Stderr, "Error: each prompt must have a name, description, and template")
-						fmt.Fprintln(os.Stderr, "Example: mcp mock prompt welcome \"Welcome message\" \"Hello {{name}}!\"")
+						fmt.Fprintln(
+							os.Stderr,
+							"Example: mcp mock prompt welcome \"Welcome message\" \"Hello {{name}}!\"",
+						)
 						os.Exit(1)
 					}
 

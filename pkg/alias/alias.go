@@ -76,7 +76,11 @@ func Save(aliases Aliases) error {
 		return fmt.Errorf("failed to marshal alias config: %w", err)
 	}
 
-	writeErr := os.WriteFile(configPath, configJSON, 0o600) // #nosec G304 - configPath is generated internally by GetConfigPath
+	writeErr := os.WriteFile(
+		configPath,
+		configJSON,
+		0o600,
+	) // #nosec G304 - configPath is generated internally by GetConfigPath
 	if writeErr != nil {
 		return fmt.Errorf("failed to write alias config file: %w", writeErr)
 	}

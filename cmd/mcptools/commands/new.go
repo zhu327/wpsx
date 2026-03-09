@@ -44,7 +44,8 @@ Examples:
 			}
 
 			// Validate transport flag
-			if transportFlag != "" && transportFlag != TransportStdio && transportFlag != TransportSSE && transportFlag != TransportHTTP {
+			if transportFlag != "" && transportFlag != TransportStdio && transportFlag != TransportSSE &&
+				transportFlag != TransportHTTP {
 				return fmt.Errorf("unsupported transport: %s (supported options: stdio, sse, http)", transportFlag)
 			}
 
@@ -69,7 +70,10 @@ Examples:
 				case "tool", "resource", "prompt": // nolint
 					components[componentType] = componentName
 				default:
-					return fmt.Errorf("unsupported component type: %s (supported types: tool, resource, prompt)", componentType)
+					return fmt.Errorf(
+						"unsupported component type: %s (supported types: tool, resource, prompt)",
+						componentType,
+					)
 				}
 			}
 

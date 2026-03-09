@@ -5,8 +5,8 @@ YELLOW=\033[0;33m
 RED=\033[0;31m
 NC=\033[0m # No Color
 
-BINARY_NAME=mcp
-ALIAS_NAME=mcpt
+BINARY_NAME=wpsx
+ALIAS_NAME=wpsx
 VERSION=$(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 
 # Default Makefile step

@@ -130,7 +130,10 @@ func ShellCmd() *cobra.Command { //nolint:gocyclo
 					}
 				case "resources":
 					var listResourcesResult *mcp.ListResourcesResult
-					listResourcesResult, listErr = mcpClient.ListResources(context.Background(), mcp.ListResourcesRequest{})
+					listResourcesResult, listErr = mcpClient.ListResources(
+						context.Background(),
+						mcp.ListResourcesRequest{},
+					)
 
 					var resources []any
 					if listErr == nil && listResourcesResult != nil {
@@ -340,7 +343,10 @@ func printShellHelp(thisCmd *cobra.Command) {
 	fmt.Fprintln(thisCmd.OutOrStdout(), "  call <entity> [--params '{...}']  Call a tool, resource, or prompt")
 	fmt.Fprintln(thisCmd.OutOrStdout(), "  format [json|pretty|table] Get or set output format")
 	fmt.Fprintln(thisCmd.OutOrStdout(), "Direct Tool Calling:")
-	fmt.Fprintln(thisCmd.OutOrStdout(), "  <tool_name> {\"param\": \"value\"}  Call a tool directly with JSON parameters")
+	fmt.Fprintln(
+		thisCmd.OutOrStdout(),
+		"  <tool_name> {\"param\": \"value\"}  Call a tool directly with JSON parameters",
+	)
 	fmt.Fprintln(thisCmd.OutOrStdout(), "  resource:<name>            Read a resource directly")
 	fmt.Fprintln(thisCmd.OutOrStdout(), "  prompt:<name>              Get a prompt directly")
 	fmt.Fprintln(thisCmd.OutOrStdout(), "Special Commands:")
