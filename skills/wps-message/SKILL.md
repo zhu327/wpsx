@@ -241,6 +241,7 @@ wpsx call kso_message_create_chat \
 - `is_join_approve`: 进群需审核 (`true`/`false`)
 - `is_owner_admin_modify`: 仅群主/管理员可修改群信息
 - `is_owner_admin_at_all`: 仅群主/管理员可 @所有人
+- `is_enable_nickname`: 群昵称优先展示 (`true`/`false`)
 
 ---
 

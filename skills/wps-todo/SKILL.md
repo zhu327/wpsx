@@ -137,6 +137,8 @@ wpsx call kso_todo_create_personal_tasks \
 - `title.prefix`: 标题前缀
 - `executors`: 执行人 ID 列表（不传默认当前用户）
 - `status`: `todo`（默认）/ `finish`
+- `ext_attrs`: 扩展字段，每个元素包含 name 和 value
+- `notify_config`: 提醒设置，包含 switch（推送开关）和 reminders（提醒列表）
 
 **截止时间优先级:** `due_in_days` > `due_time`
 

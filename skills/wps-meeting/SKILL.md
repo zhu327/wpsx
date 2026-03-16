@@ -105,7 +105,7 @@ wpsx call kso_meeting_create_meeting \
 
 **`participants_roles` 必须与参与者列表一一对应**，可选值：`attendee`（参会人）/ `organizer`（组织者）。
 
-主题、开始时间、结束时间都必须由用户指定。
+**注意:** `subject` 是必填参数。`start_date_time`/`start_date_time_str` 和 `end_date_time`/`end_date_time_str` 是可选参数，但创建实际会议时通常需要提供开始和结束时间。
 
 ---
 
