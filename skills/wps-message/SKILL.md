@@ -1,6 +1,6 @@
 ---
 name: wps-message
-description: "Read, search, and create WPS协作 chat conversations and messages. Use when summarizing chats, checking unread/@me messages, searching chat history, or creating new conversations."
+description: "Read/search WPS协作 chat conversations and messages via wpsx. Use for 群聊/聊天记录, unread/@我, daily chat summaries, finding who said something, member lookup, or creating chat conversations. Not for sending messages."
 ---
 
 # WPS IM Message Operations
@@ -11,6 +11,8 @@ description: "Read, search, and create WPS协作 chat conversations and messages
 
 **Endpoint:** `https://openapi.wps.cn/mcp/v2/kso-message/message`
 
+Examples below use `{ENDPOINT}` for this URL. In shell snippets, either replace `{ENDPOINT}` with the full URL or set `ENDPOINT="https://openapi.wps.cn/mcp/v2/kso-message/message"` and use `$ENDPOINT`.
+
 **认证:** token 由 `wpsx` 自动注入。首次使用请先运行 `wpsx auth --app-id <ID> --app-secret <SECRET>` 完成 WPS 365 OAuth2 授权。
 
 **调用格式:**
@@ -19,7 +21,7 @@ description: "Read, search, and create WPS协作 chat conversations and messages
 wpsx call <tool> -p '<json>' https://openapi.wps.cn/mcp/v2/kso-message/message -f json
 ```
 
-**当前时间:** 涉及时间过滤时，使用 `start_time_str` / `end_time_str`，格式为 `yyyy-mm-dd hh:mm:ss`（北京时间）。使用系统当前时间（北京时间 UTC+8）计算"今天"、"本周"等相对时间。
+**当前时间:** 涉及时间过滤时，使用 `start_time_str` / `end_time_str`，格式为 `yyyy-mm-dd hh:mm:ss`（北京时间）。使用系统当前时间（北京时间 UTC+8）计算"今天"、"本周"等相对时间。布尔参数使用 JSON boolean（如 `true`），不要写成字符串，除非接口错误明确要求字符串。
 
 ---
 
@@ -56,7 +58,7 @@ wpsx call <tool> -p '<json>' https://openapi.wps.cn/mcp/v2/kso-message/message -
 1. **获取最近会话列表:**
    ```bash
    wpsx call kso_message_get_chat_list \
-     -p '{"page_size": 20, "start_time": "{今天日期} 00:00:00"}' \
+     -p '{"page_size": 20, "start_time_str": "{今天日期} 00:00:00"}' \
      {ENDPOINT} -f json
    ```
 
@@ -89,7 +91,7 @@ wpsx call <tool> -p '<json>' https://openapi.wps.cn/mcp/v2/kso-message/message -
 3. **对未读数较多的会话拉取消息:**
    ```bash
    wpsx call kso_message_get_chat_messages \
-     -p '{"chat_id": "{CHAT_ID}", "page_size": 50, "filter_unread": "true", "order": "asc"}' \
+     -p '{"chat_id": "{CHAT_ID}", "page_size": 50, "filter_unread": true, "order": "asc"}' \
      {ENDPOINT} -f json
    ```
 
@@ -108,7 +110,7 @@ wpsx call <tool> -p '<json>' https://openapi.wps.cn/mcp/v2/kso-message/message -
 2. **拉取 @我 的消息:**
    ```bash
    wpsx call kso_message_get_chat_messages \
-     -p '{"chat_id": "{CHAT_ID}", "page_size": 20, "filter_mention_me": "true", "order": "desc"}' \
+     -p '{"chat_id": "{CHAT_ID}", "page_size": 20, "filter_mention_me": true, "order": "desc"}' \
      {ENDPOINT} -f json
    ```
 

@@ -1,6 +1,6 @@
 ---
 name: wps-mail
-description: "Read, search, compose and send WPS邮件 (email). Use when listing inbox, reading emails, searching mail history, drafting or sending emails."
+description: "Read, search, summarize, draft, reply/forward, and send WPS邮件 via wpsx. Use for inbox/收件箱, unread mail, 查邮件, 发邮件, 回复, 转发, mail search, or email summaries; confirm before sending."
 ---
 
 # WPS Mail (邮件) Operations
@@ -10,6 +10,8 @@ description: "Read, search, compose and send WPS邮件 (email). Use when listing
 ## Setup
 
 **Endpoint:** `https://openapi.wps.cn/mcp/v2/kso-mail/message`
+
+Examples below use `{ENDPOINT}` for this URL. In shell snippets, either replace `{ENDPOINT}` with the full URL or set `ENDPOINT="https://openapi.wps.cn/mcp/v2/kso-mail/message"` and use `$ENDPOINT`.
 
 **认证:** token 由 `wpsx` 自动注入。首次使用请先运行 `wpsx auth --app-id <ID> --app-secret <SECRET>` 完成 WPS 365 OAuth2 授权。
 

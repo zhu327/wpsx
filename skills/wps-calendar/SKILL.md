@@ -1,6 +1,6 @@
 ---
 name: wps-calendar
-description: "Manage WPS calendar events (日历/日程) via wpsx. Use when querying schedules, creating/updating events, checking free/busy status, or managing attendees."
+description: "Manage WPS calendar events (日历/日程) via wpsx. Use for schedules, creating/updating events, free-busy, attendees, and finding time slots. For online meeting rooms, transcripts, or minutes, use wps-meeting instead."
 ---
 
 # WPS Calendar (日历) Operations
@@ -10,6 +10,8 @@ description: "Manage WPS calendar events (日历/日程) via wpsx. Use when quer
 ## Setup
 
 **Endpoint:** `https://openapi.wps.cn/mcp/v2/kso-calendar/message`
+
+Examples below use `{ENDPOINT}` for this URL. In shell snippets, either replace `{ENDPOINT}` with the full URL or set `ENDPOINT="https://openapi.wps.cn/mcp/v2/kso-calendar/message"` and use `$ENDPOINT`.
 
 **认证:** token 由 `wpsx` 自动注入。首次使用请先运行 `wpsx auth --app-id <ID> --app-secret <SECRET>` 完成 WPS 365 OAuth2 授权。
 

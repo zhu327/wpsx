@@ -1,6 +1,6 @@
 ---
 name: wps-airpage
-description: "Import Markdown content into WPS AirPage (智能文档/flexpaper). Use when creating, updating, or publishing documents to AirPage."
+description: "Create, update, or publish Markdown content into WPS AirPage/智能文档/flexpaper via wpsx. Use for writing/importing reports, publishing local Markdown/code docs, or updating cloud docs; use wps-yundoc for read/search-only document tasks."
 ---
 
 # WPS AirPage Document Import

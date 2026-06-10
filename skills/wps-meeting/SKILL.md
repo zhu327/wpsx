@@ -1,6 +1,6 @@
 ---
 name: wps-meeting
-description: "Manage WPS online meetings (在线会议), participants, transcripts and minute summaries. Use when creating, querying, or managing meetings, viewing meeting transcripts or summaries."
+description: "Manage WPS online meetings (在线会议) via wpsx: meeting rooms, links/codes, participants, transcripts, minutes, and summaries. Use for creating/querying/canceling online meetings or reading 转写/纪要; use wps-calendar for ordinary schedule/free-busy tasks."
 ---
 
 # WPS Meeting (在线会议) Operations
@@ -10,6 +10,8 @@ description: "Manage WPS online meetings (在线会议), participants, transcrip
 ## Setup
 
 **Endpoint:** `https://openapi.wps.cn/mcp/v2/kso-meeting/message`
+
+Examples below use `{ENDPOINT}` for this URL. In shell snippets, either replace `{ENDPOINT}` with the full URL or set `ENDPOINT="https://openapi.wps.cn/mcp/v2/kso-meeting/message"` and use `$ENDPOINT`.
 
 **认证:** token 由 `wpsx` 自动注入。首次使用请先运行 `wpsx auth --app-id <ID> --app-secret <SECRET>` 完成 WPS 365 OAuth2 授权。
 

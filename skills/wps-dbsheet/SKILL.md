@@ -1,6 +1,6 @@
 ---
 name: wps-dbsheet
-description: "CRUD operations on WPS smart sheets (数据表/多维表格/dbsheet). Use when querying, inserting, or updating table records and sheet structures."
+description: "CRUD operations on WPS smart sheets (数据表/多维表格/dbsheet) via wpsx. Use for querying/inserting/updating records, fields, sheet structures, imports, table management, or prompts about 多维表格/数据表/记录/字段."
 ---
 
 # WPS Smart Sheet (DBSheet) Operations

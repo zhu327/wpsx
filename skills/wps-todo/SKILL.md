@@ -1,6 +1,6 @@
 ---
 name: wps-todo
-description: "Manage WPS personal tasks (个人待办/todo). Use when creating, querying, updating, or completing todo tasks."
+description: "Manage WPS personal tasks (个人待办/todo) via wpsx. Use for listing, creating, updating, completing tasks, reminders, due dates/截止时间, priorities, or todo summaries; confirm before creating/updating/completing."
 ---
 
 # WPS Todo (个人待办) Operations
@@ -10,6 +10,8 @@ description: "Manage WPS personal tasks (个人待办/todo). Use when creating, 
 ## Setup
 
 **Endpoint:** `https://openapi.wps.cn/mcp/v2/kso-todo/message`
+
+Examples below use `{ENDPOINT}` for this URL. In shell snippets, either replace `{ENDPOINT}` with the full URL or set `ENDPOINT="https://openapi.wps.cn/mcp/v2/kso-todo/message"` and use `$ENDPOINT`.
 
 **认证:** token 由 `wpsx` 自动注入。首次使用请先运行 `wpsx auth --app-id <ID> --app-secret <SECRET>` 完成 WPS 365 OAuth2 授权。
 
@@ -25,7 +27,7 @@ wpsx call <tool> -p '<json>' https://openapi.wps.cn/mcp/v2/kso-todo/message -f j
 
 ## Guardrails
 
-**当前时间:** 涉及"今天"、"本周"、"明天"等相对时间时，使用系统当前时间（北京时间 UTC+8）计算精确时间范围。
+**当前时间:** 涉及"今天"、"本周"、"明天"、"下周"等相对时间时，使用系统当前时间（北京时间 UTC+8）计算精确时间范围。对自然语言截止日期，优先换算成明确的 `due_time`；不要把“下周”机械理解成固定 7 天，需结合语境和日历周。
 
 **确认规则:**
 

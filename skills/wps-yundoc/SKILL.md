@@ -1,6 +1,6 @@
 ---
 name: wps-yundoc
-description: "Search, read, and share WPS/KDocs cloud documents (云文档). Use when working with 文档/doc content, comments, permissions, or sharing."
+description: "Search, read, extract, summarize, and inspect WPS/KDocs cloud documents (云文档/金山文档) via wpsx. Use for finding docs, reading content, comments, metadata, or document Q&A. Use wps-airpage for creating/updating document content."
 ---
 
 # WPS Cloud Document Operations
@@ -10,6 +10,8 @@ description: "Search, read, and share WPS/KDocs cloud documents (云文档). Use
 ## Setup
 
 **Endpoint:** `https://openapi.wps.cn/mcp/v2/kso-yundoc/message`
+
+Examples below use `{ENDPOINT}` for this URL. In shell snippets, either replace `{ENDPOINT}` with the full URL or set `ENDPOINT="https://openapi.wps.cn/mcp/v2/kso-yundoc/message"` and use `$ENDPOINT`.
 
 **认证:** token 由 `wpsx` 自动注入。首次使用请先运行 `wpsx auth --app-id <ID> --app-secret <SECRET>` 完成 WPS 365 OAuth2 授权。
 
@@ -32,7 +34,7 @@ wpsx call <tool> -p '<json>' https://openapi.wps.cn/mcp/v2/kso-yundoc/message -f
 
 - 搜索返回空 → 告知用户无匹配文档，建议调整关键词
 - 搜索返回多个结果 → 展示文件名和链接列表，让用户选择
-- 文档内容提取失败 → 可能是文件格式不支持（仅支持 otl/docx/pdf）
+- 文档内容提取失败 → 可能是文件格式不支持（内容提取仅支持 otl/docx/pdf；ksheet 可能可搜索但不一定可用本 playbook 提取正文）
 
 **错误处理:**
 
